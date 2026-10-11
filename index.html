@@ -158,6 +158,9 @@ aside h2,.listhead h2{font-family:var(--font-display);font-size:15px;margin:0}
 .ap.done{opacity:.55}
 .ap .when{font-family:var(--font-mono);font-size:12px;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:3px 6px;text-align:center;white-space:nowrap}
 .saved{font-size:11.5px;color:var(--ok)}
+.prog{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--brand-light),var(--brand-1))}
+.runrow{display:grid;gap:4px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}
+.newbadge{font-size:10.5px;font-weight:700;background:#e8f7ee;color:var(--ok);border-radius:4px;padding:1px 6px}
 #q{width:100%}
 @media (max-width:480px){.ap{grid-template-columns:auto minmax(0,1fr)}.ap>span:last-child{grid-column:1/-1;flex-direction:row!important;justify-content:space-between}}
 .why{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink);display:grid;gap:2px}
@@ -219,6 +222,7 @@ aside h2,.listhead h2{font-family:var(--font-display);font-size:15px;margin:0}
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tabLeads" aria-selected="true">ลูกค้า</button>
     <button class="tab" role="tab" id="tabCal" aria-selected="false">ปฏิทินนัด<span class="n" id="nAppt"></span></button>
+    <button class="tab" role="tab" id="tabFind" aria-selected="false">หาลูกค้าเพิ่ม<span class="n" id="nRun"></span></button>
   </div>
   <div class="sync" id="sync">กำลังเชื่อมต่อที่เก็บข้อมูล…</div>
 
@@ -320,6 +324,41 @@ aside h2,.listhead h2{font-family:var(--font-display);font-size:15px;margin:0}
     </div>
   </section>
 
+  <section id="viewFind" hidden style="display:grid;gap:14px">
+    <div class="card">
+      <h4>หาโรงแรมที่ใช้ Cloudbeds เพิ่ม</h4>
+      <p class="note" style="margin:0">ระบบจะค้นที่พักใน Google Maps ตามเขตที่เลือก (ผ่าน Apify) แล้วเปิดเว็บของแต่ละแห่งเพื่อดูว่าใช้ระบบจองอะไร ที่ใช้ Cloudbeds จะเข้ามาในรายชื่ออัตโนมัติ (ป้าย "ใหม่") ใช้เวลา 10–60 นาที ปิดหน้านี้ได้ระหว่างรอ</p>
+      <div class="row" style="gap:6px">
+        <button class="chip preset" type="button" data-kp="tourist">ย่านท่องเที่ยว</button>
+        <button class="chip preset" type="button" data-kp="all">ทั้ง 50 เขต</button>
+        <button class="chip preset" type="button" data-kp="none">ล้าง</button>
+      </div>
+      <div class="chips" id="fKhet"></div>
+      <div class="two">
+        <label class="f">ที่พักสูงสุดต่อการค้น 1 ครั้ง
+          <select id="fMax"><option value="20">20 (เร็ว/ถูก)</option><option value="40" selected>40</option><option value="80">80 (ละเอียด)</option></select></label>
+        <div class="f">ประเภท
+          <div class="row" style="gap:10px;font-size:13px;color:var(--ink)">
+            <label class="chk"><input type="checkbox" class="fKind" value="hotel" checked> โรงแรม</label>
+            <label class="chk"><input type="checkbox" class="fKind" value="hostel" checked> โฮสเทล</label>
+            <label class="chk"><input type="checkbox" class="fKind" value="serviced apartment" checked> อพาร์ตเมนต์</label>
+          </div></div>
+      </div>
+      <div id="fEst" class="lastact"></div>
+      <button class="primary" id="fStart">เริ่มค้นหา</button>
+      <div id="fMsg" class="note" style="margin:0"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h4>สถานะการค้นหา</h4><button class="ghost" id="fRefresh" style="padding:3px 10px;font-size:12px">รีเฟรช</button></div>
+      <div id="fRuns"><p class="note" style="margin:0">เข้าระบบทีมก่อนเพื่อดูสถานะ</p></div>
+    </div>
+    <div class="card" id="fEngCard" hidden>
+      <h4>ระบบจองที่เจอในเว็บโรงแรมทั้งหมด</h4>
+      <p class="note" style="margin:0">ใช้ดูว่าคู่แข่งของ Cloudbeds ในกรุงเทพมีใครบ้าง</p>
+      <div id="fEng" style="display:grid;gap:4px"></div>
+    </div>
+  </section>
+
   <p class="foot">คะแนนความเหมาะ (0–100) = ประเภทที่พัก 30 + จำนวนห้อง 25 + คะแนนรีวิว 20 + จำนวนรีวิว 15 + ราคา 800–2,500 ฿ อีก 10 · ราคาประมาณจาก OTA ปี 2025–2026 · เบอร์โทรส่วนใหญ่มาจากหน้าจอง Cloudbeds ควรเช็กก่อนโทร · ข้อมูล ณ 9 ต.ค. 2569</p>
 </div>
 
@@ -414,8 +453,25 @@ async function pushDirty(){
   for (const id of d){ if (!crm[id]) continue; try { await api("save", {id, data:{...crm[id], name:BY_ID[id]?.n}}); } catch { left.push(id); } }
   try { localStorage.setItem("keys-dirty", JSON.stringify(left)); } catch {}
 }
+// hotels found by the in-app search (stored server-side)
+const TOURIST_KHET = ["Phra Nakhon","Watthana","Khlong Toei","Bang Rak","Pathum Wan","Ratchathewi","Sathon","Samphanthawong"];
+function whyJs(h){
+  const out = ["ใช้ Cloudbeds อยู่แล้ว (เจอลิงก์จองตรงบน Cloudbeds ในเว็บโรงแรม) เปิดรับระบบออนไลน์และจ่ายค่าซอฟต์แวร์อยู่"];
+  if (h.s>=4) out.push(`ระดับ ${h.s} ดาว มีงบลงทุนระบบ`);
+  if (h.rc>=1000) out.push(`รีวิว Google ${fmt(h.rc)} รายการ แขกเข้าพักต่อเนื่อง`);
+  if (h.rv!=null){ if (h.rv>=9) out.push(`คะแนนรีวิว ${h.rv.toFixed(1)} ดีเยี่ยม`); else if (h.rv<7.5) out.push(`คะแนนรีวิว ${h.rv.toFixed(1)} ค่อนข้างต่ำ มีจุดให้ช่วยปรับปรุง`); }
+  if (TOURIST_KHET.includes(h.ken)) out.push(`อยู่ย่านท่องเที่ยวหลัก (${h.kth}) แข่งขันสูง ต้องการเครื่องมือช่วยขาย`);
+  if (h.web) out.push("มีเว็บไซต์ของตัวเอง ให้ความสำคัญกับการจองตรง");
+  if (h.ph) out.push("มีเบอร์โทร ติดต่อได้ทันที");
+  return out;
+}
+function addFound(list){
+  for (const h of list){ if (!h || !h.id || BY_ID[h.id]) continue;
+    h.sc = score(h); h.why = whyJs(h); HOTELS.push(h); BY_ID[h.id] = h; }
+}
 async function pullServer(){
   const res = await api("list");
+  addFound(res.found||[]);
   const server = {}; for (const r of res.leads||[]) server[r.id] = r.data;
   // keep local edits that the server has not seen yet (newer updatedAt, or missing on server)
   for (const id in crm){ const l = crm[id], sv = server[id];
@@ -436,7 +492,7 @@ async function connectTeam(fromForm){
     try { localStorage.setItem("keys-team", teamCode); } catch {}
     $("#sync").innerHTML = `เชื่อมระบบทีมแล้ว · ข้อมูลเห็นตรงกันทุกเครื่อง · แจ้งเตือนนัดเข้า LINE 08:00/18:00 <button class="ghost" id="teamOut" style="padding:2px 8px;font-size:12px;margin-left:6px">ออกจากระบบ</button>`;
     $("#teamOut").addEventListener("click",()=>{ try { localStorage.removeItem("keys-team"); } catch {} teamCode=""; store="local"; showLogin(); });
-    renderAll(); return true;
+    renderAll(); if (!$("#viewFind").hidden) loadRuns(); return true;
   } catch(e){
     if (e.message==="401"){ try { localStorage.removeItem("keys-team"); } catch {} teamCode=""; showLogin(fromForm ? "รหัสทีมไม่ถูกต้อง ลองอีกครั้ง" : ""); }
     else { $("#sync").textContent = "ต่อระบบทีมไม่ได้ (เน็ตหลุด?) ตอนนี้บันทึกไว้ในเครื่องก่อน จะส่งขึ้นให้อัตโนมัติเมื่อกลับมาออนไลน์"; }
@@ -520,7 +576,7 @@ function renderList(){
     return `<article class="lead st st-${st==="called"?"contacted":st}" data-id="${h.id}">
       <div class="tag" title="คะแนนความเหมาะ"><b>${h.sc}</b><span>FIT</span></div>
       <div style="min-width:0">
-        <div class="row" style="gap:6px 8px"><p class="name">${esc(h.n)}</p><span class="stage sg-${st}">${STAGE_LABEL[st]}</span></div>
+        <div class="row" style="gap:6px 8px"><p class="name">${esc(h.n)}</p>${h.isNew?`<span class="newbadge">ใหม่</span>`:""}<span class="stage sg-${st}">${STAGE_LABEL[st]}</span></div>
         <div class="meta"><span>เขต${esc(h.kth)}</span><span>${TYPE_LABEL[h.t]}</span><span>${h.s!=null?"★ "+h.s:""}</span><span class="${rvCls}">รีวิว ${h.rv!=null?h.rv.toFixed(1):"—"}${h.rc!=null?" ("+fmt(h.rc)+")":""}</span><span>${h.p!=null?"~"+fmt(h.p)+" ฿":""}</span></div>
         <div class="contact">${h.ph
           ? [h.ph,h.ph2].filter(Boolean).map(p=>`<a class="tel" href="tel:${p.replace(/[^0-9+]/g,"")}">☎ ${esc(p)}</a><button class="copy" data-copy="${esc(p)}">คัดลอก</button>`).join("")
@@ -758,14 +814,72 @@ $("#reset").addEventListener("click",()=>{ preset=null; todo=null; khetSel=null;
   document.querySelectorAll("#presets .chip,#todo .chip").forEach(b=>b.setAttribute("aria-pressed","false"));
   $("#q").value=""; $("#type").value=""; $("#stars").value="0"; $("#rv").value="0"; $("#pmin").value=""; $("#pmax").value="";
   $("#fstage").value=""; $("#hasPhone").checked=false; $("#sort").value="score"; renderList(); });
-function setTab(cal){
-  $("#tabLeads").setAttribute("aria-selected", !cal); $("#tabCal").setAttribute("aria-selected", cal);
-  $("#viewLeads").hidden = cal; $("#viewCal").hidden = !cal;
-  try { localStorage.setItem("keys-tab", cal?"cal":"leads"); } catch {}
-  if (cal) renderCal();
+function setTab(name){
+  if (name===true) name = "cal"; if (name===false) name = "leads";
+  for (const [t,v] of [["leads","Leads"],["cal","Cal"],["find","Find"]]){
+    $("#tab"+v).setAttribute("aria-selected", name===t); $("#view"+v).hidden = name!==t; }
+  try { localStorage.setItem("keys-tab", name); } catch {}
+  if (name==="cal") renderCal();
+  if (name==="find") { renderFindForm(); loadRuns(); }
 }
-$("#tabLeads").addEventListener("click",()=>setTab(false));
-$("#tabCal").addEventListener("click",()=>setTab(true));
+$("#tabLeads").addEventListener("click",()=>setTab("leads"));
+$("#tabCal").addEventListener("click",()=>setTab("cal"));
+$("#tabFind").addEventListener("click",()=>setTab("find"));
+
+// ---------- in-app lead search (Supabase keys-crm → Apify)
+const KHET_ALL = {"Phra Nakhon":"พระนคร","Dusit":"ดุสิต","Nong Chok":"หนองจอก","Bang Rak":"บางรัก","Bang Khen":"บางเขน","Bang Kapi":"บางกะปิ","Pathum Wan":"ปทุมวัน","Pom Prap Sattru Phai":"ป้อมปราบศัตรูพ่าย","Phra Khanong":"พระโขนง","Min Buri":"มีนบุรี","Lat Krabang":"ลาดกระบัง","Yan Nawa":"ยานนาวา","Samphanthawong":"สัมพันธวงศ์","Phaya Thai":"พญาไท","Thon Buri":"ธนบุรี","Bangkok Yai":"บางกอกใหญ่","Huai Khwang":"ห้วยขวาง","Khlong San":"คลองสาน","Taling Chan":"ตลิ่งชัน","Bangkok Noi":"บางกอกน้อย","Bang Khun Thian":"บางขุนเทียน","Phasi Charoen":"ภาษีเจริญ","Nong Khaem":"หนองแขม","Rat Burana":"ราษฎร์บูรณะ","Bang Phlat":"บางพลัด","Din Daeng":"ดินแดง","Bueng Kum":"บึงกุ่ม","Sathon":"สาทร","Bang Sue":"บางซื่อ","Chatuchak":"จตุจักร","Bang Kho Laem":"บางคอแหลม","Prawet":"ประเวศ","Khlong Toei":"คลองเตย","Suan Luang":"สวนหลวง","Chom Thong":"จอมทอง","Don Mueang":"ดอนเมือง","Ratchathewi":"ราชเทวี","Lat Phrao":"ลาดพร้าว","Watthana":"วัฒนา","Bang Khae":"บางแค","Lak Si":"หลักสี่","Sai Mai":"สายไหม","Khan Na Yao":"คันนายาว","Saphan Sung":"สะพานสูง","Wang Thonglang":"วังทองหลาง","Khlong Sam Wa":"คลองสามวา","Bang Na":"บางนา","Thawi Watthana":"ทวีวัฒนา","Thung Khru":"ทุ่งครุ","Bang Bon":"บางบอน"};
+const fSel = new Set(["Watthana","Bang Rak","Phra Nakhon"]);
+let fRendered = false, runTimer = null;
+function renderFindForm(){
+  if (!fRendered){
+    $("#fKhet").innerHTML = Object.entries(KHET_ALL).sort((a,b)=>a[1].localeCompare(b[1],"th")).map(([en,th])=>`<button type="button" class="chip" data-k="${esc(en)}" aria-pressed="false">${esc(th)}</button>`).join("");
+    fRendered = true;
+  }
+  document.querySelectorAll("#fKhet .chip").forEach(b=>b.setAttribute("aria-pressed", fSel.has(b.dataset.k)));
+  const kinds = [...document.querySelectorAll(".fKind:checked")].length, max = +$("#fMax").value;
+  const places = fSel.size*kinds*max, usd = Math.round(places*0.004*10)/10;
+  $("#fEst").innerHTML = `เลือก <b>${fSel.size}</b> เขต · ค้นได้สูงสุด ~<b>${fmt(places)}</b> ที่พัก · ค่า Apify ประมาณ <b>$${usd}</b> (~${fmt(Math.round(usd*35))} บาท) · ใช้เวลา ~${Math.max(10,Math.round(places/120))} นาที`;
+  $("#fStart").disabled = !fSel.size || !kinds;
+}
+$("#fKhet").addEventListener("click", e=>{ const b=e.target.closest(".chip"); if(!b) return; fSel.has(b.dataset.k)?fSel.delete(b.dataset.k):fSel.add(b.dataset.k); renderFindForm(); });
+document.querySelectorAll("[data-kp]").forEach(b=>b.addEventListener("click",()=>{ fSel.clear();
+  if (b.dataset.kp==="tourist") TOURIST_KHET.forEach(k=>fSel.add(k)); if (b.dataset.kp==="all") Object.keys(KHET_ALL).forEach(k=>fSel.add(k)); renderFindForm(); }));
+$("#fMax").addEventListener("change", renderFindForm);
+document.querySelectorAll(".fKind").forEach(c=>c.addEventListener("change", renderFindForm));
+$("#fStart").addEventListener("click", async ()=>{
+  if (store!=="api"){ $("#fMsg").textContent = "เข้าระบบทีมก่อน (ใส่รหัสทีมด้านบน)"; return; }
+  $("#fStart").disabled = true; $("#fMsg").textContent = "กำลังเริ่ม…";
+  try {
+    const r = await api("search", {districts:[...fSel], max:+$("#fMax").value, kinds:[...document.querySelectorAll(".fKind:checked")].map(c=>c.value), by:staff});
+    $("#fMsg").textContent = r.ok ? "เริ่มค้นหาแล้ว ✅ ระบบจะทำต่อเองแม้ปิดหน้านี้" : (r.error||"เริ่มไม่ได้");
+  } catch(e){ $("#fMsg").textContent = "เริ่มไม่ได้ ("+e.message+")"; }
+  $("#fStart").disabled = false; loadRuns();
+});
+$("#fRefresh").addEventListener("click", loadRuns);
+const RUN_LABEL = {starting:"กำลังเริ่ม",scraping:"กำลังค้นใน Google Maps",loading:"กำลังโหลดรายชื่อ",checking:"กำลังเช็กเว็บโรงแรม",done:"เสร็จแล้ว",failed:"ไม่สำเร็จ"};
+let lastFound = -1;
+async function loadRuns(){
+  clearTimeout(runTimer);
+  if (store!=="api"){ $("#fRuns").innerHTML = `<p class="note" style="margin:0">เข้าระบบทีมก่อนเพื่อดูสถานะ</p>`; return; }
+  let r; try { r = await api("search-status"); } catch { $("#fRuns").innerHTML = `<p class="note" style="margin:0">โหลดสถานะไม่ได้ ลองกดรีเฟรช</p>`; return; }
+  if (!r.apify_ready) $("#fMsg").textContent = "ยังไม่ได้ใส่ Apify token ใน Supabase — แจ้ง Claude ให้ส่งลิงก์ใส่ token";
+  const active = r.runs.find(x=>!["done","failed"].includes(x.status));
+  $("#nRun").textContent = active ? "●" : "";
+  $("#fRuns").innerHTML = r.runs.length ? r.runs.map(x=>{
+    const pct = x.status==="checking"||x.status==="done" ? Math.round((x.checked/Math.max(1,x.places))*100) : x.status==="scraping"?15:x.status==="loading"?30:0;
+    const d = (x.params?.districts||[]).map(k=>KHET_ALL[k]||k);
+    return `<div class="runrow"><div class="row" style="justify-content:space-between"><b>${RUN_LABEL[x.status]||x.status}</b><span class="note" style="margin:0">${thStamp(x.created_at)}</span></div>
+      <div class="prog"><i style="width:${x.status==="done"?100:pct}%"></i></div>
+      <span>${d.slice(0,6).join(", ")}${d.length>6?` +${d.length-6} เขต`:""} · พบที่พัก ${fmt(x.places)} · เช็กแล้ว ${fmt(x.checked)} · <b>เจอ Cloudbeds ใหม่ ${fmt(x.found)}</b></span>
+      ${x.error?`<span style="color:var(--bad)">${esc(x.error)}</span>`:""}</div>`; }).join("")
+    : `<p class="note" style="margin:0">ยังไม่เคยค้นหา เลือกเขตแล้วกด "เริ่มค้นหา"</p>`;
+  $("#fEngCard").hidden = !r.engines.length;
+  const tot = r.engines.reduce((a,e)=>a+Number(e.n),0)||1;
+  $("#fEng").innerHTML = r.engines.map(e=>`<div class="kb" style="cursor:default"><span class="nm">${esc(e.engine)}</span><span class="ct">${fmt(Number(e.n))}</span><span class="tr"><i style="width:${Number(e.n)/tot*100}%"></i></span></div>`).join("");
+  const totalFound = r.runs.reduce((a,x)=>a+x.found,0);
+  if (totalFound !== lastFound){ if (lastFound>=0) { try { await pullServer(); renderAll(); } catch {} } lastFound = totalFound; }
+  if (active) runTimer = setTimeout(loadRuns, 20000);
+}
 $("#export").addEventListener("click",()=>{
   const rows = HOTELS.filter(h=>passes(h,false));
   const head = ["เขต","ชื่อ","ประเภท","เบอร์โทร","อีเมล","ขั้นตอน","ผู้ติดต่อ","ต้องทำนัด","นัดถัดไป","ติดต่อล่าสุด","โน้ต","ดาว","รีวิว","ราคา฿","คะแนน","ลิงก์ Cloudbeds"];
@@ -779,7 +893,7 @@ function renderAll(){ renderKpis(); renderList(); if (!$("#viewCal").hidden) ren
 
 try { if (matchMedia("(min-width:821px)").matches) $("#moreF").open = true; } catch {}
 let startTab = "leads"; try { startTab = localStorage.getItem("keys-tab")||"leads"; } catch {}
-renderAll(); if (startTab==="cal") setTab(true);
+renderAll(); if (startTab!=="leads") setTab(startTab);
 try { const o = sessionStorage.getItem("keys-open"); if (o && BY_ID[o]) openDrawer(o); } catch {}
 
 (async()=>{

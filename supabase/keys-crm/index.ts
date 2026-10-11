@@ -5,6 +5,9 @@
 //   POST ?action=save   {id, data}    header x-team-code  -> upsert one lead
 //   POST ?action=remind&slot=morning|evening  header x-cron-key -> LINE reminders
 //   POST ?action=line-webhook         (LINE platform)     -> remembers group ids the bot joins
+//   POST ?action=search {districts,max,kinds,by}  header x-team-code -> start a "find more leads" run (Apify)
+//   GET  ?action=search-status        header x-team-code  -> recent runs + progress
+//   POST ?action=search-tick          header x-cron-key   -> advance the active run (pg_cron, every minute)
 //   GET  ?action=health                                   -> config status (no secrets)
 //
 // Stored in table crm_settings (service-role only, never in the repo):
@@ -13,7 +16,9 @@
 // Edge Function secrets:
 //   LINE_TOKEN           channel access token of the keys LINE OA   (optional until the OA exists)
 //   LINE_CHANNEL_SECRET  channel secret, verifies webhook signatures (optional until the OA exists)
+//   APIFY_TOKEN          Apify API token for the lead search
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { startSearch, tick as searchTick, status as searchStatus } from "./search.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -126,9 +131,16 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
+    if (action === "search-tick") {
+      if (!safeEqual(req.headers.get("x-cron-key") || "", String((await setting("cron_key")) || ""))) return json({ error: "forbidden" }, 403);
+      const names = (await setting("hotel_names")) as Record<string, string> | undefined;
+      const { data: found } = await db.from("crm_found_hotels").select("id");
+      const known = new Set<string>([...Object.keys(names || {}), ...(found || []).map((f) => f.id)]);
+      return json(await searchTick(db, known));
+    }
+
     if (action === "remind") {
-      const gotKey = req.headers.get("x-cron-key") || "", wantKey = String((await setting("cron_key")) || "");
-      if (!safeEqual(gotKey, wantKey)) return json({ error: "forbidden", got: gotKey.length, want: wantKey.length }, 403);
+      if (!safeEqual(req.headers.get("x-cron-key") || "", String((await setting("cron_key")) || ""))) return json({ error: "forbidden" }, 403);
       const slot = url.searchParams.get("slot") === "evening" ? "evening" : "morning";
       const force = url.searchParams.get("force") === "1";
       const { day, text } = await buildReminder(slot);
@@ -153,8 +165,11 @@ Deno.serve(async (req) => {
     if (action === "list") {
       const { data, error } = await db.from("crm_leads").select("id, data, updated_at");
       if (error) throw error;
-      return json({ ok: true, leads: data });
+      const { data: found } = await db.from("crm_found_hotels").select("data").order("created_at");
+      return json({ ok: true, leads: data, found: (found || []).map((f) => f.data) });
     }
+    if (action === "search" && req.method === "POST") return json(await startSearch(db, await req.json()));
+    if (action === "search-status") return json({ ok: true, ...(await searchStatus(db)) });
     if (action === "save" && req.method === "POST") {
       const { id, data } = await req.json();
       if (typeof id !== "string" || !/^[A-Za-z0-9]{3,40}$/.test(id) || typeof data !== "object" || !data) return json({ error: "bad input" }, 400);

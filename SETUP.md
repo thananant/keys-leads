@@ -9,16 +9,13 @@
 2. Source: **Deploy from a branch** · Branch: **main** / **(root)** → **Save**
 3. รอ 1–2 นาที แล้วเปิด https://thananant.github.io/keys-leads/
 
-## 2. ใส่ Apify token เพื่อหาลูกค้าเพิ่ม (3 นาที)
-1. เข้า https://console.apify.com/settings/integrations แล้วกด copy **Personal API token**
-2. ไปที่ repo → **Settings → Secrets and variables → Actions → New repository secret**
-   - Name: `APIFY_TOKEN`
-   - Secret: วาง token
-3. สั่งรันจากแอป GitHub บน iPhone: repo → **Actions** → **Find more Cloudbeds hotels** → **Run workflow**
-   - ค้นทุกเขต: ใส่ `all` (ประมาณ 6,000 ที่พัก ค่า Apify ประมาณ $20–25 ครั้งเดียว)
-   - ลองก่อนถูก ๆ: ใส่ `Watthana,Bang Rak,Phra Nakhon` (ประมาณ $2)
-4. รันเสร็จ (10–40 นาที): โรงแรม Cloudbeds ที่เจอใหม่จะขึ้นหน้าเว็บเอง
-   - ส่วนที่พักที่ใช้ระบบจองยี่ห้ออื่นจะอยู่ในไฟล์ `data/other-engines.csv`
+## 2. ใส่ Apify token (2 นาที) เพื่อให้ปุ่ม "หาลูกค้าเพิ่ม" ทำงาน
+1. เปิด https://console.apify.com/settings/integrations แล้วกด copy **Personal API token**
+2. บอก Claude ว่า "พร้อมใส่ Apify token" แล้ว Claude จะเปิดหน้า Supabase ให้วาง token เอง (ไม่ต้องส่งในแชท)
+   - ชื่อ secret: `APIFY_TOKEN`
+3. ในหน้าเว็บ ไปที่แท็บ **หาลูกค้าเพิ่ม** → เลือกเขต → กด **เริ่มค้นหา**
+   - ระบบทำงานต่อเองแม้ปิดหน้าเว็บ (pg_cron เดินงานทุกนาที)
+   - โรงแรม Cloudbeds ที่เจอใหม่จะขึ้นในรายชื่อพร้อมป้าย "ใหม่"
 
 ## 3. สร้างบอท LINE ของ keys เพื่อแจ้งเตือนนัด (10 นาที)
 1. เข้า https://developers.line.biz/console/ ใน Safari แล้ว login ด้วย LINE

@@ -15,13 +15,14 @@
 - repo นี้เป็น **Public** ห้ามใส่ token, รหัสทีม, cron key หรือข้อมูลลับใด ๆ
 - Backend: Supabase project **cloudbeds-rm** (`vauqbfjgkdhgrtycqhnd`)
   - edge function `keys-crm` (โค้ดอยู่ที่ `supabase/keys-crm/index.ts` deploy ผ่าน Supabase MCP)
-  - ตาราง `crm_leads`, `crm_settings`, `crm_reminder_log`
+  - ตาราง `crm_leads`, `crm_settings`, `crm_reminder_log`, `crm_search_runs`, `crm_places`, `crm_found_hotels`
+  - ค้นหาลูกค้าเพิ่ม: `supabase/keys-crm/search.ts` (Apify Google Maps → เช็กระบบจองในเว็บ) เดินงานด้วย pg_cron `keys-crm-search-tick` ทุกนาที
   - รหัสทีมกับ cron key อยู่ใน `crm_settings` เท่านั้น
-  - LINE token อยู่ใน Edge Function secrets
+  - LINE token และ `APIFY_TOKEN` อยู่ใน Edge Function secrets
 
 ## โครงสร้าง
 - `lead-finder.template.html` คือหน้าเว็บ (`__DATA__` = ข้อมูลโรงแรม)
   - `python3 build.py` สร้าง `index.html` (Pages), `lead-finder.html` (claude.ai artifact), `.xlsx`, `.csv`
 - `data/hotels.json` = ข้อมูลโรงแรม · `data/phones-*.json` = ข้อมูลติดต่อ · เหตุผลที่เสนอแต่ละโรงแรมสร้างใน `build.py`
-- `apify/find_leads.py` + `.github/workflows/find-leads.yml` = หาโรงแรมที่ใช้ Cloudbeds เพิ่ม (ต้องมี secret `APIFY_TOKEN`)
+- โรงแรมที่หาเจอในระบบเก็บใน `crm_found_hotels` แล้วหน้าเว็บโหลดมารวมกับ `data/hotels.json` ตอนเข้าระบบทีม
 - งานที่ยังค้าง/วิธีตั้งค่า: `SETUP.md`
