@@ -440,6 +440,10 @@ async function save(id){
 // ---------- team backend (Supabase edge function keys-crm)
 const API = "https://vauqbfjgkdhgrtycqhnd.supabase.co/functions/v1/keys-crm";
 let teamCode = ""; try { teamCode = localStorage.getItem("keys-team")||""; } catch {}
+// team link: https://…/keys-leads/#KEYS-XXXXXX logs this device in once, then the code is removed from the address bar
+(()=>{ const m = location.hash.match(/^#(KEYS-[A-Z0-9]{4,12})$/i);
+  if (m){ teamCode = m[1].toUpperCase(); try { localStorage.setItem("keys-team", teamCode); } catch {}
+    try { history.replaceState(null, "", location.pathname + location.search); } catch {} } })();
 async function api(action, body){
   const r = await fetch(API+"?action="+action, {method: body ? "POST" : "GET", headers: {"content-type":"application/json","x-team-code":teamCode}, body: body ? JSON.stringify(body) : undefined});
   if (!r.ok) throw new Error(String(r.status));
