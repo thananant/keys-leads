@@ -6,7 +6,6 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 M = '/tmp/claude-0/m/'
-OUT = sys.argv[1]
 FPS, SEC = 30, 9
 W, H = 1080, 1920
 BG_TOP, BG_BOT = (244, 246, 252), (226, 232, 248)
@@ -171,6 +170,7 @@ def compare():
     return fr
 
 if __name__ == '__main__':
+    OUT = sys.argv[1]
     which = sys.argv[2:] or ['unfold', 'compass', 'portal', 'buddy', 'compare']
     for name, num, title, sub, nick, kw, h in SINGLE:
         if name in which: render(f'{OUT}/{num}-{name}.mp4', single(name, num, title, sub, nick, kw, h))
