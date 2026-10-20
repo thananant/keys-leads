@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>keys Content</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 180' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='19'%3E%3Cpath d='M12 80 L84 14' stroke='%233d5cb8'/%3E%3Cpath d='M12 96 H30 Q36 96 41 100 L86 142' stroke='%232c48a4'/%3E%3Cpath d='M22 124 H32 Q38 124 43 128 L70 158' stroke='%231c2457'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* keys content approval: same back-office tokens as the lead finder */
+:root{
+  --bg:#f2f4fa; --surface:#ffffff; --ink:#1c2457; --muted:#646d96; --line:#dde2f0;
+  --accent:#2d45a0; --accent-soft:#e6ebf8; --brand-1:#2e4a9e; --brand-2:#1c2457;
+  --ok:#1f7a4d; --ok-soft:#e3f3ea; --warn:#9a6a00; --warn-soft:#fbf1d9; --bad:#b23a3a; --bad-soft:#f8e3e3;
+  --font-display:"Plus Jakarta Sans","IBM Plex Sans Thai",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans Thai","Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1330; --surface:#171d42; --ink:#e6eaf7; --muted:#9aa3c8; --line:#2a3462; --accent:#9fb3e8; --accent-soft:#232d5e;
+  --ok:#6cc98a; --ok-soft:#173a2a; --warn:#e2b54b; --warn-soft:#3a2f12; --bad:#ef8a8a; --bad-soft:#3d1c22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1330; --surface:#171d42; --ink:#e6eaf7; --muted:#9aa3c8; --line:#2a3462; --accent:#9fb3e8; --accent-soft:#232d5e;
+  --ok:#6cc98a; --ok-soft:#173a2a; --warn:#e2b54b; --warn-soft:#3a2f12; --bad:#ef8a8a; --bad-soft:#3d1c22; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font-body)}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 64px;display:grid;gap:14px}
+h1{font:700 22px/1.2 var(--font-display);margin:0}
+h2{font:600 16px/1.3 var(--font-display);margin:0}
+.sub{color:var(--muted);margin:2px 0 0;font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;position:sticky;top:0;background:var(--bg);z-index:3;padding-top:6px}
+.tab{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+.tab[aria-selected=true]{background:var(--brand-2);border-color:var(--brand-2);color:#fff}
+.tab .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-size:12px;text-align:center}
+.tab[aria-selected=true] .n{background:#ffffff33;color:#fff}
+.tab .n.alert{background:var(--bad);color:#fff}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px}
+.card.stale{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad) inset}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.pill{border-radius:999px;padding:1px 8px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:600;color:var(--ink)}
+.hook{font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:14px}
+pre{white-space:pre-wrap;font:inherit;margin:6px 0 0;background:var(--bg);border-radius:8px;padding:8px}
+.facts{display:flex;flex-wrap:wrap;gap:4px}
+.facts span{font-size:12px;border:1px dashed var(--line);border-radius:6px;padding:0 6px;color:var(--muted)}
+.why{background:var(--bad-soft);color:var(--bad);border-radius:8px;padding:8px;font-size:13px;white-space:pre-wrap}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.b{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:14px}
+.b.ok{background:var(--ok);border-color:var(--ok);color:#fff} .b.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.b.primary{background:linear-gradient(120deg,var(--brand-1),var(--brand-2));border:0;color:#fff}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
+textarea{min-height:70px}
+label{display:grid;gap:3px;font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+.note{color:var(--muted);font-size:13px;margin:0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--brand-2);color:#fff;padding:8px 14px;border-radius:10px;font-size:14px;z-index:9}
+.day{font:600 13px var(--font-display);color:var(--muted);margin:6px 2px -4px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>keys · คอนเทนต์</h1>
+    <p class="sub" id="sync">กำลังโหลด…</p>
+  </header>
+
+  <form id="login" class="card" hidden>
+    <h2>เข้าระบบทีม</h2>
+    <p class="note">ใช้รหัสทีมเดียวกับหน้า Lead Finder</p>
+    <input id="teamIn" autocomplete="off" autocapitalize="characters" placeholder="KEYS-XXXXXX">
+    <button class="b primary" type="submit">เข้าระบบ</button>
+  </form>
+
+  <nav class="tabs" id="tabs" hidden role="tablist">
+    <button class="tab" data-tab="ideas" role="tab">📝 รออนุมัติ<span class="n" id="nIdeas">0</span></button>
+    <button class="tab" data-tab="plan" role="tab">📅 แผนโพสต์<span class="n" id="nPlan">0</span></button>
+    <button class="tab" data-tab="stale" role="tab">⚠️ ข้อมูลเปลี่ยน<span class="n" id="nStale">0</span></button>
+    <button class="tab" data-tab="posted" role="tab">✅ โพสต์แล้ว<span class="n" id="nPosted">0</span></button>
+    <button class="tab" data-tab="facts" role="tab">📚 ข้อมูลสินค้า</button>
+    <button class="tab" data-tab="settings" role="tab">⚙️ ตั้งค่า</button>
+  </nav>
+
+  <main id="view"></main>
+  <p class="note" style="text-align:center"><a href="mascot/" style="color:var(--accent)">🧸 ดูมาสคอต</a></p>
+</div>
+<script>
+const API = "https://vauqbfjgkdhgrtycqhnd.supabase.co/functions/v1/keys-content";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let teamCode = ""; try { teamCode = localStorage.getItem("keys-team") || ""; } catch {}
+let staff = ""; try { staff = localStorage.getItem("keys-staff") || ""; } catch {}
+let tab = "ideas"; try { tab = localStorage.getItem("keys-content-tab") || "ideas"; } catch {}
+let D = { settings: {}, facts: [], clips: [], changes: [] };
+
+const CHAR = { avatar: "🧑 avatar", mascot: "🧸 มาสคอต", both: "🧑+🧸 คู่" };
+const STATUS = { idea: ["รออนุมัติ", ""], revise: ["รอเขียนใหม่", "warn"], approved: ["อนุมัติแล้ว", "ok"], producing: ["กำลังทำคลิป", "ok"],
+  review: ["รอตรวจคลิป", "warn"], scheduled: ["ตั้งเวลาแล้ว", "ok"], posted: ["โพสต์แล้ว", "ok"], rejected: ["ไม่เอา", "bad"] };
+const TH_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const TH_D = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+const thDate = s => { if (!s) return ""; const d = new Date(s + "T00:00:00"); return `${TH_D[d.getDay()]} ${d.getDate()} ${TH_M[d.getMonth()]}`; };
+
+async function api(action, body) {
+  const r = await fetch(API + "?action=" + action, { method: body ? "POST" : "GET",
+    headers: { "content-type": "application/json", "x-team-code": teamCode, "x-staff": encodeURIComponent(staff || "") },
+    body: body ? JSON.stringify(body) : undefined });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.error || String(r.status)); e.status = r.status; throw e; }
+  return j;
+}
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.append(d); setTimeout(() => d.remove(), 2600); }
+
+async function load() {
+  try {
+    D = await api("list");
+    try { localStorage.setItem("keys-team", teamCode); } catch {}
+    $("#login").hidden = true; $("#tabs").hidden = false;
+    $("#sync").textContent = `เป้า ${D.settings.clips_per_month} คลิป/เดือน · ลง ${(D.settings.channels || []).join(", ")}`;
+    render();
+  } catch (e) {
+    if (e.status === 401) { try { localStorage.removeItem("keys-team"); } catch {} teamCode = ""; showLogin(e.message === "wrong team code" && $("#teamIn").value ? "รหัสทีมไม่ถูกต้อง" : ""); }
+    else $("#sync").textContent = "โหลดไม่สำเร็จ (" + e.message + ") ลองรีเฟรชอีกครั้ง";
+  }
+}
+function showLogin(msg) { $("#login").hidden = false; $("#tabs").hidden = true; $("#view").innerHTML = ""; $("#sync").textContent = msg || "ใส่รหัสทีมเพื่อเข้าระบบ"; }
+
+const live = c => !["rejected", "removed"].includes(c.status);
+const lists = () => ({
+  ideas: D.clips.filter(c => ["idea", "revise"].includes(c.status) && !c.stale),
+  plan: D.clips.filter(c => ["approved", "producing", "review", "scheduled"].includes(c.status) && !c.stale).sort((a, b) => (a.planned_for || "").localeCompare(b.planned_for || "")),
+  stale: D.clips.filter(c => c.stale && live(c)),
+  posted: D.clips.filter(c => c.status === "posted" && !c.stale).sort((a, b) => (b.posted_at || "").localeCompare(a.posted_at || "")),
+});
+
+function clipCard(c) {
+  const [st, cls] = STATUS[c.status] || [c.status, ""];
+  const facts = (c.fact_keys || []).map(k => `<span title="${esc(c.fact_snapshot?.[k])}">${esc((D.facts.find(f => f.key === k) || {}).label || k)}</span>`).join("");
+  let btns = "";
+  if (c.stale) {
+    btns = c.status === "posted"
+      ? `<button class="b bad" data-op="remove">🗑 ลบโพสต์แล้ว</button><button class="b" data-op="keep">เก็บไว้ (ยังไม่ผิด)</button>`
+      : `<button class="b" data-op="keep">ข้อมูลในคลิปยังใช้ได้</button><button class="b bad" data-op="reject">ทิ้งคลิปนี้</button>`;
+  } else if (c.status === "idea") {
+    btns = `<button class="b ok" data-op="approve">✅ อนุมัติ</button><button class="b" data-op="revise">✏️ ขอแก้</button><button class="b" data-op="reject">❌ ไม่เอา</button>`;
+  } else if (["approved", "producing", "review", "scheduled"].includes(c.status)) {
+    btns = `<button class="b ok" data-op="posted">📤 โพสต์แล้ว</button><button class="b" data-op="revise">✏️ ขอแก้</button>`;
+  } else if (c.status === "posted") {
+    const links = Object.entries(c.post_urls || {}).map(([k, v]) => `<a href="${esc(v)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(k)}</a>`).join(" · ");
+    btns = links ? `<span class="note">ลิงก์: ${links}</span>` : "";
+  }
+  return `<article class="card${c.stale ? " stale" : ""}" data-code="${esc(c.code)}">
+    <div class="meta"><span class="code">${esc(c.code)}</span><span class="pill ${cls}">${st}</span>
+      <span>${CHAR[c.character] || ""}</span>${c.pillar ? `<span>· ${esc(c.pillar)}</span>` : ""}
+      ${c.planned_for && c.status !== "posted" ? `<span>· 📅 ${thDate(c.planned_for)}</span>` : ""}</div>
+    <h2>${esc(c.title)}</h2>
+    ${c.stale ? `<div class="why">${c.status === "posted" ? "⚠️ คลิปนี้โพสต์ไปแล้ว แต่ข้อมูลเปลี่ยน ลูกค้าอาจเข้าใจผิด แนะนำให้ลบ\n" : "⚠️ ข้อมูลเปลี่ยนแล้ว ระบบจะเขียนสคริปต์ใหม่ให้รอบถัดไป\n"}${esc(c.stale_reason)}</div>` : ""}
+    ${c.hook ? `<div class="hook">🎣 ${esc(c.hook)}</div>` : ""}
+    ${c.feedback && c.status === "revise" ? `<div class="note">✏️ ขอแก้: ${esc(c.feedback)}</div>` : ""}
+    <details><summary>ดูสคริปต์และแคปชัน</summary><pre>${esc(c.script)}</pre>${c.caption ? `<pre>${esc(c.caption)}</pre>` : ""}</details>
+    ${facts ? `<div class="facts">${facts}</div>` : ""}
+    <div class="btns">${btns}</div>
+  </article>`;
+}
+
+function render() {
+  const L = lists();
+  $("#nIdeas").textContent = L.ideas.length; $("#nPlan").textContent = L.plan.length; $("#nPosted").textContent = L.posted.length;
+  $("#nStale").textContent = L.stale.length; $("#nStale").classList.toggle("alert", L.stale.length > 0);
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  const v = $("#view");
+  if (tab in L) {
+    const items = L[tab];
+    let html = "";
+    if (tab === "stale") html += `<p class="note" style="margin-bottom:10px">เมื่อราคา แพ็กเกจ หรือฟีเจอร์ของ keys เปลี่ยน (ทั้งจากระบบและที่คนแก้) คลิปที่พูดถึงข้อมูลนั้นจะขึ้นที่นี่ทันที</p>`;
+    if (tab === "plan") { let last = ""; html += items.map(c => { const d = c.planned_for || ""; const h = d !== last ? `<div class="day">${d ? thDate(d) : "ยังไม่กำหนดวัน"}</div>` : ""; last = d; return h + clipCard(c); }).join(""); }
+    else html += items.map(clipCard).join("");
+    if (!items.length) html += `<div class="empty">${{ ideas: "ยังไม่มีไอเดียใหม่ ระบบจะคิดเพิ่มให้ทุกเช้า", plan: "ยังไม่มีคลิปที่อนุมัติ", stale: "✅ ไม่มีคลิปที่ข้อมูลเก่า", posted: "ยังไม่มีคลิปที่โพสต์" }[tab]}</div>`;
+    v.innerHTML = `<div style="display:grid;gap:10px">${html}</div>`;
+  } else if (tab === "facts") {
+    const row = f => `<div class="card"><div class="meta"><span class="pill ${f.source === "auto" ? "ok" : ""}">${f.source === "auto" ? "ดึงจากระบบ keys" : "พิมพ์เอง"}</span><span>v${f.version}</span><span class="code" style="font-weight:400">${esc(f.key)}</span></div>
+      <h2>${esc(f.label)}</h2><div>${esc(f.value)}</div>
+      ${f.source === "manual" ? `<div class="btns"><button class="b" data-edit="${esc(f.key)}">แก้ข้อความ</button></div>` : ""}</div>`;
+    const ch = (D.changes || []).slice(0, 15).map(c => `<li>${new Date(c.changed_at).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })} · <b>${esc(c.label)}</b>: ${esc(c.old_value ?? "—")} → ${esc(c.new_value ?? "ถูกลบ")} <span class="note">(${esc(c.changed_by || "")}, กระทบ ${c.affected} คลิป)</span></li>`).join("");
+    v.innerHTML = `<div style="display:grid;gap:10px">
+      <p class="note">ทุกคลิปต้องอ้างข้อมูลจากรายการนี้เท่านั้น ถ้าข้อมูลเปลี่ยน คลิปที่ใช้ข้อมูลนั้นจะถูกแจ้งเตือนเอง · ราคา/แพ็กเกจ/วันทดลองดึงจากระบบ keys อัตโนมัติ</p>
+      ${D.facts.map(row).join("")}
+      <form class="card" id="addFact"><h2>เพิ่มข้อมูลใหม่</h2>
+        <label>รหัส (อังกฤษตัวเล็ก เช่น feat_new)<input name="key" pattern="[a-z][a-z0-9_]{1,39}" required></label>
+        <label>หัวข้อ<input name="label" required></label><label>ข้อความ<textarea name="value" required></textarea></label>
+        <button class="b primary">บันทึก</button></form>
+      ${ch ? `<div class="card"><h2>ประวัติการเปลี่ยนแปลง</h2><ul style="margin:0;padding-left:18px;font-size:13px">${ch}</ul></div>` : ""}
+    </div>`;
+  } else if (tab === "settings") {
+    const s = D.settings;
+    v.innerHTML = `<form class="card" id="setForm">
+      <label>จำนวนคลิปต่อเดือน<input name="per" type="number" min="1" max="60" value="${s.clips_per_month}"></label>
+      <label>เวลาโพสต์ (คั่นด้วย ,)<input name="times" value="${esc((s.post_times || []).join(", "))}"></label>
+      <label>ชื่อ avatar<input name="avatar" value="${esc(s.avatar_name)}"></label>
+      <label>ชื่อมาสคอต<input name="mascot" value="${esc(s.mascot_name)}"></label>
+      <label>ข้อความถึงระบบคิดคอนเทนต์ (แนวทาง สิ่งที่อยากเน้น/ห้ามพูด)<textarea name="brief">${esc(s.brief)}</textarea></label>
+      <label>ชื่อของคุณ (บันทึกว่าใครกดอนุมัติ)<input name="staff" value="${esc(staff)}"></label>
+      <button class="b primary">บันทึก</button>
+      <button class="b" type="button" id="logout">ออกจากระบบ</button></form>`;
+  }
+}
+
+document.addEventListener("click", async e => {
+  const t = e.target.closest(".tab");
+  if (t) { tab = t.dataset.tab; try { localStorage.setItem("keys-content-tab", tab); } catch {} render(); return; }
+  const b = e.target.closest("[data-op]");
+  if (b) {
+    const code = b.closest("[data-code]").dataset.code, op = b.dataset.op, body = { code, op };
+    if (op === "revise") { const n = prompt("อยากให้แก้อะไร"); if (n === null) return; body.note = n; }
+    if (op === "posted") {
+      const urls = {};
+      for (const ch of ["facebook", "instagram", "tiktok"]) { const u = prompt(`ลิงก์โพสต์ ${ch} (เว้นว่างได้)`); if (u === null) return; if (u.trim()) urls[ch] = u.trim(); }
+      body.urls = urls;
+    }
+    if (op === "remove" && !confirm("ลบโพสต์ออกจากทุกช่องทางแล้วใช่ไหม")) return;
+    b.disabled = true;
+    try { await api("clip", body); toast("บันทึกแล้ว"); await load(); } catch (err) { toast(err.message); b.disabled = false; }
+    return;
+  }
+  const ed = e.target.closest("[data-edit]");
+  if (ed) {
+    const f = D.facts.find(x => x.key === ed.dataset.edit);
+    const nv = prompt(`แก้ "${f.label}"\n(คลิปที่ใช้ข้อมูลนี้จะถูกแจ้งเตือน)`, f.value);
+    if (nv === null || nv.trim() === f.value) return;
+    try { await api("fact", { key: f.key, label: f.label, value: nv }); toast("บันทึกแล้ว"); await load(); } catch (err) { toast(err.message); }
+    return;
+  }
+  if (e.target.id === "logout") { try { localStorage.removeItem("keys-team"); } catch {} teamCode = ""; showLogin(); }
+});
+document.addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === "login") { teamCode = $("#teamIn").value.trim().toUpperCase(); await load(); return; }
+  try {
+    if (f.id === "addFact") await api("fact", { key: f.key.value.trim(), label: f.label.value, value: f.value.value });
+    if (f.id === "setForm") {
+      staff = f.staff.value.trim(); try { localStorage.setItem("keys-staff", staff); } catch {}
+      await api("settings", { clips_per_month: Number(f.per.value), post_times: f.times.value.split(",").map(s => s.trim()).filter(Boolean),
+        avatar_name: f.avatar.value, mascot_name: f.mascot.value, brief: f.brief.value });
+    }
+    toast("บันทึกแล้ว"); await load();
+  } catch (err) { toast(err.message); }
+});
+document.addEventListener("visibilitychange", () => { if (!document.hidden && teamCode) load(); });
+
+// team link: …/content/#KEYS-XXXXXX logs this device in once
+(() => { const m = location.hash.match(/^#(KEYS-[A-Z0-9]{4,12})$/i);
+  if (m) { teamCode = m[1].toUpperCase(); try { localStorage.setItem("keys-team", teamCode); history.replaceState(null, "", location.pathname); } catch {} } })();
+if (teamCode) load(); else showLogin();
+</script>
+</body>
+</html>
